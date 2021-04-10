@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %} ثبت نام {% endblock title %}
+
+{% block content %}
+
+    <form action="" class="form form-control" method="post" novalidate>
+        {% csrf_token %} <br>
+        {{ form.non_field_errors }}
+        {{ form.username.errors }}
+        <label for="{{ form.username.id_for_label }}"></label>
+        {{ form.username }}<br>
+        {{ form.email.errors }}
+        <label for="{{ form.email.id_for_label }}"></label>
+        {{ form.email }}<br>
+        {{ form.password.errors }}
+        <label for="{{ form.password.id_for_label }}"></label>
+        {{ form.password }}<br>
+        <div class="d-flex justify-content-center">
+            <input type="submit" class="btn btn-primary" value="ثبت نام">
+        </div>
+    </form>
+
+{% endblock content %}

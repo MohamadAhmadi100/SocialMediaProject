@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} {{ post.slug }} {% endblock title %}
+
+{% block js_file %}
+    <script src="{% static 'posts/js/like_script.js' %}"></script>
+{% endblock js_file %}
+
+{% block content %}
+    {% if request.user.is_authenticated and request.user.id == post.user.id %}
+        <div class="d-flex justify-content-between">
+            <a class="text-decoration-none btn btn-outline-info"
+               href="{% url 'posts:post_edit' post.user.id post.id %}">
+                ویرایش
+            </a>
+            <a class="text-decoration-none btn btn-outline-danger"
+               href="{% url 'posts:post_delete' post.user.id post.id %}">
+                حذف
+            </a>
+        </div><br>
+    {% else %}
+        <small>
+        نویسنده: <a href="{% url 'account:profile' post.user.id %}">{{ post.user }}</a>
+    {% endif %} تاریخ: {{ post.created|date }}</small>
+    <hr>
+    <div class="card-body text-justify mt-2 p-2">{{ post.body }}</div><br>
+    {# comments #}
+
+    <div class="card bg-light mb-3">
+        <div class="card-header my-1">
+            {% if request.user.is_authenticated %}
+                <div class="mx-3 d-inline" id="like" data-id="{{ post.id }}">
+                    <h5 class="d-inline">
+                        <a href="#" class="text-decoration-none">
+                            <i id="heart" style="color:red;"
+                               class="{% if is_liked %}bi bi-heart-fill{% else %}bi bi-heart{% endif %}"></i>
+                        </a>
+                    </h5>
+                    <div id="like_count" class="d-inline">
+                        {{ post.likes_count }}
+                    </div>
+                </div>
+            {% else %}
+                {% with total_likes=post.likes_count %}
+                    <div class="mx-3 d-inline">
+                        <h5 class="d-inline">
+                            <i class="bi bi-heart"></i>
+                        </h5>
+                        <small id="like_count" class="text-muted">
+                            {{ total_likes }}
+                        </small>
+                    </div>
+                {% endwith %}
+
+            {% endif %}
+            {% with total=comments.count|add:replies_count %}
+                <div class="mx-3 d-inline">
+                    <h5 class="d-inline">
+                        <a href="#" id="comments" class="text-decoration-none">
+                            <i class="bi bi-chat-dots" style="color:red;"></i>
+                    </h5>
+                    <small class="text-muted">
+                        {{ total }}
+                    </small>
+                    </a>
+                </div>
+            {% endwith %}
+            <div class="mx-3 d-inline">
+                <h5 class="d-inline">
+                    <i class="bi bi-eye-fill" style="color:red;"></i>
+                </h5>
+                <small class="text-muted">{{ post_views }} </small>
+            </div>
+        </div>
+
+        <form action="{% url 'posts:add_comment' post.id %}" method="post"
+              class="form-group d-flex justify-content-between">
+            <div class="m-2">
+                {{ form.as_p }} {% csrf_token %}
+            </div>
+            <input type="submit" value="    ثبت نظر    " class="btn btn-outline-info btn-sm align-self-center m-2">
+        </form>
+        <div id="all_comments" style="display:none;">
+            {% for comment in comments %}
+                <div class="card m-1 p-3">
+                    <small class="text-muted">
+                        <a class="text-decoration-none" href="{% url 'account:profile' comment.user.id %}">
+                            {{ comment.user }}
+                        </a>
+                        در {{ comment.created|timesince }} قبل
+                    </small>
+                    <hr>
+                    <p class="card-text">
+                        {{ comment.body }}
+                    </p>
+                    <form action="{% url 'posts:add_reply' post.id comment.id %}" method="post"
+                          class="form-group d-flex justify-content-between">
+                        <div class="my-1">
+                            {{ reply.as_p }} {% csrf_token %}
+                        </div>
+                        <input type="submit" value="    پاسخ    "
+                               class="btn btn-outline-info btn-sm align-self-start m-2">
+
+                    </form>
+                    {% for reply in comment.r_comment.all %}
+                        <div class="card bg-light mx-3 my-1 p-3">
+                            <small class="text-muted">
+                                <a class="text-decoration-none" href="{% url 'account:profile' reply.user.id %}">
+                                    {{ reply.user }}
+                                </a>
+                                در {{ reply.created|timesince }} قبل</small>
+                            <hr>
+                            <p class="card-text text-muted">
+                                {{ reply.body }}
+                            </p>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% empty %} <small class="text-muted">
+                بازخوردی ثبت نشده است
+            </small>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock content %}
+
+

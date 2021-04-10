@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %} ورود {% endblock title %}
+
+{% block content %}
+
+    <form action="" class="form form-control" method="post" novalidate>
+        {{ form.as_p }} {% csrf_token %}
+        <div class="d-flex justify-content-center">
+            <input type="submit" class="btn btn-primary" value="ورود">
+            <small class="text-muted my-2 mx-3">کلمه عبور خود را فراموش کرده اید؟<a class="text-decoration-none" href="{% url 'account:phone_login' %}"> کلیک کنید</a></small>
+        </div>
+    </form>
+
+{% endblock content %}

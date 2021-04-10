@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+    حساب کاربری {{ user.username }}
+{% endblock title %}
+
+{% block js_file %}
+    <script src="{% static 'account/js/script.js' %}"></script>
+{% endblock js_file %}
+
+{% block content %}<br>
+    <h2 class="text-center">{{ user.username }}</h2>
+    <small class="text-center">{{ user.profile.bio }}</small><br>
+    {% if request.user.id != user.id and not is_following %}
+        <div class="d-flex justify-content-center">
+            <button id="following_btn" data-id="{{ user.id }}" class="btn btn-sm btn-primary text-white">follow</button>
+        </div>
+    {% elif request.user.id != user.id and is_following %}
+        <div class="d-flex justify-content-center">
+            <button id="following_btn" data-id="{{ user.id }}" class="btn btn-sm btn-primary text-white">unfollow</button>
+        </div>
+    {% endif %}
+    <small class="m-3"> نام: {{ user.first_name }}</small>
+    <small class="m-3"> نام خانوادگی: {{ user.last_name }}</small>
+    <small class="m-3"> تلفن: {{ user.profile.phone }}</small>
+    <small class="m-3"> ایمیل: {{ user.email }}</small><br>
+    {% if request.user.is_authenticated %}
+        {% if self_profile %}
+            <div class="d-flex justify-content-between m-3">
+                <a class="px-4 py-2 mb-2 bg-primary text-white text-decoration-none rounded"
+                   href="{% url 'posts:new_post' request.user.id %}">ایجاد پست جدید</a>
+                <a class="px-4 py-2 mb-2 bg-primary text-white text-decoration-none rounded"
+                   href="{% url 'account:edit_profile' request.user.id %}">ویرایش پروفایل</a>
+            </div>
+        {% endif %}
+    {% endif %}
+    <div class="card p-2">
+        {% for post in posts %}
+            <div class="p-2">
+                <small class="card-header">
+                    در {{ post.created|timesince }} قبل
+                </small>
+                <a class="text-decoration-none text-justify" href="{{ post.get_absolute_url }}">
+                    <div class="mt-2 p-2">
+                        {{ post.body|safe|truncatewords:"50" }}
+                    </div>
+                </a>
+                {% empty %} توییتی موجود نیست
+            </div>
+        {% endfor %}
+    </div>
+{% endblock content %}

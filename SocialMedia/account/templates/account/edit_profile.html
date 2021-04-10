@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block title %} ویرایش حساب کاربری {% endblock title %}
+{% block content %}
+    <form class="form-control" action="" method="post">
+        {{ form.as_p }} {% csrf_token %}
+        <div class="d-flex justify-content-between">
+            <input type="submit" value="ویرایش" class="btn btn-primary">
+            <a href="{% url 'account:change_password' %}" class="text-decoration-none">تغییر رمز عبور</a>
+        </div>
+    </form><br>
+{% endblock content %}

@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block title %} فراموشی رمز عبور {% endblock title %}
+
+{% block content %}
+    <form action="" method="post" class="form form-cotrol" novalidate>
+        {{ form.as_p }} {% csrf_token %}
+        <div class="d-flex justify-content-center">
+            <input type="submit" class="btn btn-info text-white" value="ارسال">
+        </div>
+    </form>
+{% endblock content %}
